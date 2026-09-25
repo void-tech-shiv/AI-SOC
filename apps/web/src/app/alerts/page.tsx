@@ -17,8 +17,8 @@ export const dynamic = "force-dynamic";
 export default async function AlertsPage() {
   let alerts: any[] = [];
   try {
-    const data = await fetcher<any[]>("/api/v1/alerts");
-    if (Array.isArray(data)) alerts = data;
+    const data = await fetcher<{ alerts: any[], total: number }>("/api/v1/alerts");
+    if (data && Array.isArray(data.alerts)) alerts = data.alerts;
   } catch (error) {
     console.error("Failed to fetch alerts", error);
   }
@@ -53,7 +53,7 @@ export default async function AlertsPage() {
               ) : (
                 alerts.map((alert) => (
                   <tr key={alert.id} className="border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                    <td className="p-4 align-middle font-mono text-xs text-mutedForeground">{alert.id.substring(0, 8)}...</td>
+                    <td className="p-4 align-middle font-mono text-xs text-mutedForeground">AL-{alert.id}</td>
                     <td className="p-4 align-middle">
                       <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${severityColor(alert.severity)}`}>
                         {alert.severity}

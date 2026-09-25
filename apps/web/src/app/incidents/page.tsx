@@ -17,8 +17,8 @@ export const dynamic = "force-dynamic";
 export default async function IncidentsPage() {
   let incidents: any[] = [];
   try {
-    const data = await fetcher<any[]>("/api/v1/incidents");
-    if (Array.isArray(data)) incidents = data;
+    const data = await fetcher<{ incidents: any[], total: number }>("/api/v1/incidents");
+    if (data && Array.isArray(data.incidents)) incidents = data.incidents;
   } catch (error) {
     console.error("Failed to fetch incidents", error);
   }
@@ -55,7 +55,7 @@ export default async function IncidentsPage() {
                   <tr key={incident.id} className="border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                     <td className="p-4 align-middle font-mono text-xs text-mutedForeground">
                       <Link href={`/incidents/${incident.id}`} className="hover:underline hover:text-primary">
-                        {incident.id.substring(0, 8)}...
+                        {incident.incident_key}
                       </Link>
                     </td>
                     <td className="p-4 align-middle">{incident.title}</td>
@@ -71,7 +71,7 @@ export default async function IncidentsPage() {
                     </td>
                     <td className="p-4 align-middle">
                       <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-xs font-medium">
-                        {incident.alerts?.length || 0}
+                        {incident.alert_count || 0}
                       </span>
                     </td>
                     <td className="p-4 align-middle text-mutedForeground flex items-center gap-1">

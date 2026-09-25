@@ -5,15 +5,15 @@ export const dynamic = "force-dynamic";
 
 async function getStats() {
   try {
-    const [incidents, alerts] = await Promise.all([
-      fetcher<any[]>("/api/v1/incidents").catch(() => []),
-      fetcher<any[]>("/api/v1/alerts").catch(() => []),
+    const [incidentsRes, alertsRes] = await Promise.all([
+      fetcher<{ incidents: any[], total: number }>("/api/v1/incidents").catch(() => null),
+      fetcher<{ alerts: any[], total: number }>("/api/v1/alerts").catch(() => null),
     ]);
 
-    const safeIncidents = Array.isArray(incidents) ? incidents : [];
-    const safeAlerts = Array.isArray(alerts) ? alerts : [];
+    const safeIncidents = incidentsRes?.incidents || [];
+    const safeAlerts = alertsRes?.alerts || [];
 
-    const activeIncidents = safeIncidents.filter(i => i.status !== "closed").length;
+    const activeIncidents = safeIncidents.filter(i => i.status !== "closed" && i.status !== "resolved").length;
     const criticalAlerts = safeAlerts.filter(a => a.severity === "critical").length;
     const openAlerts = safeAlerts.filter(a => a.status === "open").length;
 
@@ -21,8 +21,8 @@ async function getStats() {
       activeIncidents,
       criticalAlerts,
       openAlerts,
-      totalIncidents: safeIncidents.length,
-      totalAlerts: safeAlerts.length,
+      totalIncidents: incidentsRes?.total || safeIncidents.length,
+      totalAlerts: alertsRes?.total || safeAlerts.length,
     };
   } catch (error) {
     console.error("Failed to fetch stats", error);

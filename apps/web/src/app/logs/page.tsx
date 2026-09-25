@@ -6,8 +6,8 @@ export const dynamic = "force-dynamic";
 export default async function LogsPage() {
   let logs: any[] = [];
   try {
-    const data = await fetcher<any[]>("/api/v1/logs?limit=100");
-    if (Array.isArray(data)) logs = data;
+    const data = await fetcher<{ logs: any[], total: number }>("/api/v1/logs?limit=100");
+    if (data && Array.isArray(data.logs)) logs = data.logs;
   } catch (error) {
     console.error("Failed to fetch logs", error);
   }
