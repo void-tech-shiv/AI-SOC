@@ -1,0 +1,42 @@
+[
+  {
+    "timestamp": "2026-09-25T10:00:00Z",
+    "source": "firewall",
+    "event_type": "network_anomaly",
+    "severity": "high",
+    "username": null,
+    "ip_address": "192.168.1.105",
+    "message": "Unusual outbound traffic spike on port 443.",
+    "raw_event": "{'src_ip': '192.168.1.105', 'dst_port': 443, 'bytes': 1050200, 'action': 'allow'}"
+  },
+  {
+    "timestamp": "2026-09-25T10:05:00Z",
+    "source": "auth_server",
+    "event_type": "login_failure",
+    "severity": "medium",
+    "username": "admin",
+    "ip_address": "10.0.0.50",
+    "message": "Multiple failed SSH login attempts from unknown IP.",
+    "raw_event": "{'src_ip': '10.0.0.50', 'user': 'admin', 'service': 'sshd', 'attempts': 5}"
+  },
+  {
+    "timestamp": "2026-09-25T10:10:00Z",
+    "source": "database_monitor",
+    "event_type": "data_access",
+    "severity": "high",
+    "username": "service_account_3",
+    "ip_address": "172.16.0.12",
+    "message": "Database access patterns deviate from baseline. Potential exfiltration.",
+    "raw_event": "{'user': 'service_account_3', 'query_count': 5000, 'table': 'users', 'duration_ms': 450}"
+  },
+  {
+    "timestamp": "2026-09-25T10:15:00Z",
+    "source": "endpoint_agent",
+    "event_type": "malware_detected",
+    "severity": "critical",
+    "username": "jdoe",
+    "ip_address": "192.168.1.22",
+    "message": "Suspicious process execution detected resembling ransomware behavior.",
+    "raw_event": "{'process': 'encrypter.exe', 'path': 'C:\\\\Users\\\\jdoe\\\\AppData\\\\Local\\\\Temp', 'hash': 'a1b2c3d4e5f6'}"
+  }
+]
