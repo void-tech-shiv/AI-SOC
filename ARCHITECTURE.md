@@ -26,4 +26,7 @@
 - **DET-002**: Malware Detected (Antivirus/EDR alerts)
 - **DET-003**: Network Anomaly (Unusual traffic patterns)
 - **DET-004**: Data Access (Unauthorized data access attempts)
-- **DET-005**: Privilege Escalation (Future)
+- **DET-005**: Unknown Critical Security Event
+
+Description:
+Fallback detection rule for critical security events when no more specific rule matches.

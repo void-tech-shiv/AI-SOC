@@ -3,7 +3,19 @@
 An AI-Powered Cybersecurity Operations Platform for educational purposes.
 
 ## Overview
-This platform uses synthetic security logs, detects suspicious activity, correlates alerts into incidents, uses AI/RAG to investigate incidents, and displays findings in a web dashboard.
+
+**CURRENTLY IMPLEMENTED:**
+- synthetic security log ingestion
+- Neon PostgreSQL storage
+- deterministic detection engine
+- DET-001 through DET-005
+- security alert generation and management
+
+**FUTURE:**
+- incident correlation
+- SOC dashboard
+- AI/RAG investigation
+- human-approved remediation recommendations
 
 ## Services
 - `apps/web`: Next.js Frontend
