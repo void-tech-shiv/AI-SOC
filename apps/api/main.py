@@ -20,12 +20,12 @@ from apps.api.schemas import SecurityLogCreate, SecurityLogResponse, SecurityLog
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-
-# 1. Ensure python-dotenv loads root .env
-env_path = find_dotenv(usecwd=True)
-if not env_path:
-    env_path = os.path.join(os.path.dirname(__file__), "../../.env")
-load_dotenv(env_path)
+from apps.api.database import (
+    engine,
+    get_db,
+    check_db_connection,
+    db_configured,
+)
 
 app = FastAPI(title="AI SOC Platform API", version="1.0.0")
 
@@ -37,59 +37,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-db_configured = bool(DATABASE_URL)
-db_connected = False
-
-# 2. Ensure DATABASE_URL uses postgresql+psycopg://
-if DATABASE_URL:
-    if DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
-    elif DATABASE_URL.startswith("postgresql://"):
-        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
-    
-    if "sslmode=" not in DATABASE_URL:
-        sep = "&" if "?" in DATABASE_URL else "?"
-        DATABASE_URL += f"{sep}sslmode=require"
-        
-    DATABASE_URL = DATABASE_URL.replace("&channel_binding=require", "").replace("?channel_binding=require&", "?").replace("?channel_binding=require", "")
-
-try:
-    if DATABASE_URL:
-        # Echo is False so we don't accidentally leak credentials in logs
-        engine = create_async_engine(DATABASE_URL, echo=False, connect_args={"connect_timeout": 15})
-        AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
-    else:
-        engine = None
-except Exception as e:
-    # 4 & 5. Never print full URL/password. Show only error type.
-    print(f"Failed to initialize database engine: {type(e).__name__}")
-    engine = None
-
-async def get_db():
-    if not engine:
-        raise HTTPException(status_code=500, detail="Database not configured")
-    async with AsyncSessionLocal() as session:
-        yield session
-
-async def check_db_connection() -> bool:
-    if not engine:
-        return False
-    try:
-        async with asyncio.timeout(15.0):
-            async with engine.begin() as conn:
-                await conn.execute(text("SELECT 1"))
-        return True
-    except Exception as e:
-        # 4 & 5. Never print full URL/password. Show only error type and short message.
-        print(f"Database connection failed: {type(e).__name__} - Could not connect to DB")
-        return False
+from apps.api.detection import router as detection_router
+app.include_router(detection_router)
 
 @app.on_event("startup")
 async def startup():
-    global db_connected
+    from apps.api.database import db_connected
     db_connected = await check_db_connection()
-    if db_connected:
+    if db_connected and engine:
         print("Database connected successfully.")
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
