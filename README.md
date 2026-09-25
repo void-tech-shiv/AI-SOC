@@ -8,12 +8,45 @@ This platform uses synthetic security logs, detects suspicious activity, correla
 ## Services
 - `apps/web`: Next.js Frontend
 - `apps/api`: FastAPI Backend
-- `services/ingestion`: Log ingestion
-- `services/detection`: Threat detection
-- `services/correlation`: Alert correlation
-- `services/ai-investigator`: AI/RAG investigator
 
-## Setup
-1. Copy `.env.example` to `.env`
-2. Run `docker-compose up -d` to start the database
-3. Run the backend and frontend (see DEVELOPMENT_PLAN.md)
+## Database Setup
+The platform uses Neon PostgreSQL for the database.
+You must have a `.env` file at the root of the project with a valid `DATABASE_URL`.
+Example:
+`DATABASE_URL=postgresql://user:password@endpoint/dbname`
+
+## Backend Startup
+Run the backend server using uvicorn:
+```bash
+python -m uvicorn apps.api.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+## Seed Command
+To generate and insert synthetic security logs, run the seed script:
+```bash
+$env:PYTHONPATH="."; python apps/api/seed_logs.py
+```
+
+## APIs
+The backend exposes the following API endpoints:
+
+**Log APIs**
+- `GET /api/v1/logs`: Fetch logs.
+- `GET /api/v1/logs/{id}`: Fetch log by ID.
+
+**Detection APIs**
+- `POST /api/v1/detections/run`: Run detection rules over logs to generate alerts.
+- `GET /api/v1/detection-rules`: List all loaded detection rules.
+
+**Alert APIs**
+- `GET /api/v1/alerts`: Fetch alerts (supports filtering by severity, status, rule_id).
+- `GET /api/v1/alerts/{id}`: Fetch alert by ID.
+- `PATCH /api/v1/alerts/{id}/status`: Update alert status.
+
+## Current Status
+- Phase 1: Foundation (COMPLETE)
+- Phase 2: Log Ingestion (COMPLETE)
+- Phase 3: Detection Engine + Alerts (COMPLETE)
+- Phase 4: Incident Correlation (NOT STARTED)
+- Phase 5: Dashboard (NOT STARTED)
+- Phase 6: AI Investigator / RAG (NOT STARTED)
