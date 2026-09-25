@@ -1,4 +1,4 @@
-import { fetcher } from "@/lib/api";
+import { fetcher, Alert, AlertListResponse } from "@/lib/api";
 import { AlertTriangle, Clock, Shield } from "lucide-react";
 import Link from "next/link";
 
@@ -15,12 +15,27 @@ function severityColor(severity: string) {
 export const dynamic = "force-dynamic";
 
 export default async function AlertsPage() {
-  let alerts: any[] = [];
+  let alerts: Alert[] = [];
+  let errorMsg: string | null = null;
   try {
-    const data = await fetcher<{ alerts: any[], total: number }>("/api/v1/alerts");
-    if (data && Array.isArray(data.alerts)) alerts = data.alerts;
+    const data = await fetcher<AlertListResponse>("/api/v1/alerts");
+    if (data && Array.isArray(data.alerts)) {
+      alerts = data.alerts;
+    } else {
+      throw new Error("Invalid response format");
+    }
   } catch (error) {
     console.error("Failed to fetch alerts", error);
+    errorMsg = "Unable to load alerts";
+  }
+
+  if (errorMsg) {
+    return (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold tracking-tight text-red-500">{errorMsg}</h2>
+        <a href="/alerts" className="inline-block px-4 py-2 bg-primary text-primaryForeground rounded border border-border hover:bg-muted">Retry</a>
+      </div>
+    );
   }
 
   return (
@@ -68,7 +83,7 @@ export default async function AlertsPage() {
                     <td className="p-4 align-middle">{(alert.confidence_score * 100).toFixed(0)}%</td>
                     <td className="p-4 align-middle text-mutedForeground flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      {new Date(alert.created_at).toLocaleString()}
+                      {alert.created_at ? new Date(alert.created_at).toLocaleString() : 'N/A'}
                     </td>
                   </tr>
                 ))

@@ -151,4 +151,14 @@ class Corr004(CorrelationRule):
                 })
         return candidates
 
-RULES = [Corr001(), Corr002(), Corr003(), Corr004()]
+class Corr005(CorrelationRule):
+    rule_id = 'CORR-005'
+    name = 'Single Alert Incident Fallback'
+    severity = 'derived from source alert'
+    time_window_minutes = None
+    description = 'Creates a standalone incident for an unused high or critical alert after specific correlation rules have been evaluated.'
+
+    def evaluate(self, alerts: List[dict]) -> List[dict]:
+        return []
+
+RULES = [Corr001(), Corr002(), Corr003(), Corr004(), Corr005()]

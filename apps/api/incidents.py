@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 @router.get("/correlation-rules", response_model=List[CorrelationRuleResponse])
 async def get_correlation_rules():
-    return [{"rule_id": r.rule_id, "rule_name": r.name} for r in RULES]
+    return [{"rule_id": r.rule_id, "rule_name": r.name, "severity": getattr(r, "severity", None), "time_window_minutes": getattr(r, "time_window_minutes", None), "description": getattr(r, "description", None)} for r in RULES]
 
 @router.post("/correlations/run", response_model=CorrelationRunResponse)
 async def run_correlation(db: AsyncSession = Depends(get_db)):

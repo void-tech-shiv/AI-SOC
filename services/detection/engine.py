@@ -30,6 +30,6 @@ def evaluate_log(log: Any) -> Tuple[List[DetectionFinding], int]:
 
 def get_detection_rules() -> List[dict]:
     return [
-        {"rule_id": r.rule_id, "rule_name": r.rule_name}
+        {"rule_id": r.rule_id, "rule_name": r.rule_name, "description": getattr(r, "description", None), "severity": getattr(r, "severity", None)}
         for r in RULE_REGISTRY
     ]

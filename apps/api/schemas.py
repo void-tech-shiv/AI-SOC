@@ -70,6 +70,8 @@ class DetectionRunResponse(BaseModel):
 class DetectionRuleResponse(BaseModel):
     rule_id: str
     rule_name: str
+    description: Optional[str] = None
+    severity: Optional[str] = None
 
 
 class IncidentStatus(str, Enum):
@@ -120,6 +122,9 @@ class CorrelationRunResponse(BaseModel):
 class CorrelationRuleResponse(BaseModel):
     rule_id: str
     rule_name: str
+    description: Optional[str] = None
+    severity: Optional[str] = None
+    time_window_minutes: Optional[int] = None
 
 class IncidentAlertResponse(BaseModel):
     incident_id: int

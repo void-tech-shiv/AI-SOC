@@ -1,4 +1,4 @@
-import { fetcher } from "@/lib/api";
+import { fetcher, Incident, IncidentListResponse } from "@/lib/api";
 import { ShieldAlert, Clock } from "lucide-react";
 import Link from "next/link";
 
@@ -15,12 +15,27 @@ function severityColor(severity: string) {
 export const dynamic = "force-dynamic";
 
 export default async function IncidentsPage() {
-  let incidents: any[] = [];
+  let incidents: Incident[] = [];
+  let errorMsg: string | null = null;
   try {
-    const data = await fetcher<{ incidents: any[], total: number }>("/api/v1/incidents");
-    if (data && Array.isArray(data.incidents)) incidents = data.incidents;
+    const data = await fetcher<IncidentListResponse>("/api/v1/incidents");
+    if (data && Array.isArray(data.incidents)) {
+      incidents = data.incidents;
+    } else {
+      throw new Error("Invalid response format");
+    }
   } catch (error) {
     console.error("Failed to fetch incidents", error);
+    errorMsg = "Unable to load incidents";
+  }
+
+  if (errorMsg) {
+    return (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold tracking-tight text-red-500">{errorMsg}</h2>
+        <a href="/incidents" className="inline-block px-4 py-2 bg-primary text-primaryForeground rounded border border-border hover:bg-muted">Retry</a>
+      </div>
+    );
   }
 
   return (
@@ -76,7 +91,7 @@ export default async function IncidentsPage() {
                     </td>
                     <td className="p-4 align-middle text-mutedForeground flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      {new Date(incident.created_at).toLocaleString()}
+                      {incident.created_at ? new Date(incident.created_at).toLocaleString() : 'N/A'}
                     </td>
                   </tr>
                 ))

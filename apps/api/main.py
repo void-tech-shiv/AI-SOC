@@ -31,7 +31,7 @@ app = FastAPI(title="AI SOC Platform API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3003", "http://127.0.0.1:3003"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -121,18 +121,26 @@ async def list_logs(
     db: AsyncSession = Depends(get_db)
 ):
     query = select(SecurityLog)
+    from sqlalchemy import func
+    count_query = select(func.count(SecurityLog.id))
+    
     if severity:
         query = query.filter(SecurityLog.severity == severity)
+        count_query = count_query.filter(SecurityLog.severity == severity)
     if event_type:
         query = query.filter(SecurityLog.event_type == event_type)
+        count_query = count_query.filter(SecurityLog.event_type == event_type)
     if source:
         query = query.filter(SecurityLog.source == source)
+        count_query = count_query.filter(SecurityLog.source == source)
+    
+    total = await db.scalar(count_query)
     
     query = query.order_by(SecurityLog.timestamp.desc()).limit(limit)
     
     result = await db.execute(query)
     logs = result.scalars().all()
-    return {"logs": logs, "total": len(logs)}
+    return {"logs": logs, "total": total}
 
 @app.get("/api/v1/logs/{log_id}", response_model=SecurityLogResponse)
 async def get_log(log_id: int, db: AsyncSession = Depends(get_db)):

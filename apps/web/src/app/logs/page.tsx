@@ -1,15 +1,30 @@
-import { fetcher } from "@/lib/api";
+import { fetcher, SecurityLog, SecurityLogListResponse } from "@/lib/api";
 import { FileText, Clock, Search } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function LogsPage() {
-  let logs: any[] = [];
+  let logs: SecurityLog[] = [];
+  let errorMsg: string | null = null;
   try {
-    const data = await fetcher<{ logs: any[], total: number }>("/api/v1/logs?limit=100");
-    if (data && Array.isArray(data.logs)) logs = data.logs;
+    const data = await fetcher<SecurityLogListResponse>("/api/v1/logs?limit=100");
+    if (data && Array.isArray(data.logs)) {
+      logs = data.logs;
+    } else {
+      throw new Error("Invalid response format");
+    }
   } catch (error) {
     console.error("Failed to fetch logs", error);
+    errorMsg = "Unable to load logs";
+  }
+
+  if (errorMsg) {
+    return (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold tracking-tight text-red-500">{errorMsg}</h2>
+        <a href="/logs" className="inline-block px-4 py-2 bg-primary text-primaryForeground rounded border border-border hover:bg-muted">Retry</a>
+      </div>
+    );
   }
 
   return (
@@ -47,7 +62,7 @@ export default async function LogsPage() {
                         {log.event_type}
                       </span>
                     </td>
-                    <td className="p-4 align-middle">{log.user || "-"}</td>
+                    <td className="p-4 align-middle">{log.username || "-"}</td>
                     <td className="p-4 align-middle font-mono text-xs text-mutedForeground">{log.ip_address || "-"}</td>
                     <td className="p-4 align-middle text-mutedForeground flex items-center gap-1">
                       <Clock className="h-3 w-3" />
