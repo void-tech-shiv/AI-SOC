@@ -38,7 +38,9 @@ app.add_middleware(
 )
 
 from apps.api.detection import router as detection_router
+from apps.api.incidents import router as incidents_router
 app.include_router(detection_router)
+app.include_router(incidents_router)
 
 @app.on_event("startup")
 async def startup():
@@ -47,6 +49,8 @@ async def startup():
     if db_connected and engine:
         print("Database connected successfully.")
         async with engine.begin() as conn:
+            # automatic development table creation
+            # tech-debt: Use Alembic for production-style schema migrations.
             await conn.run_sync(Base.metadata.create_all)
     else:
         print("Starting without DB connection.")

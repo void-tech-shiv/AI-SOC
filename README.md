@@ -10,9 +10,12 @@ An AI-Powered Cybersecurity Operations Platform for educational purposes.
 - deterministic detection engine
 - DET-001 through DET-005
 - security alert generation and management
+- deterministic incident correlation
+- incident priority scoring
+- incident management
+- alert-to-incident relationships
 
 **FUTURE:**
-- incident correlation
 - SOC dashboard
 - AI/RAG investigation
 - human-approved remediation recommendations
@@ -55,10 +58,19 @@ The backend exposes the following API endpoints:
 - `GET /api/v1/alerts/{id}`: Fetch alert by ID.
 - `PATCH /api/v1/alerts/{id}/status`: Update alert status.
 
+**Correlation APIs**
+- `GET /api/v1/correlation-rules`: List all loaded correlation rules.
+- `POST /api/v1/correlations/run`: Run correlation rules over unassigned alerts.
+
+**Incident APIs**
+- `GET /api/v1/incidents`: Fetch incidents.
+- `GET /api/v1/incidents/{id}`: Fetch incident by ID.
+- `PATCH /api/v1/incidents/{id}/status`: Update incident status.
+
 ## Current Status
 - Phase 1: Foundation (COMPLETE)
 - Phase 2: Log Ingestion (COMPLETE)
 - Phase 3: Detection Engine + Alerts (COMPLETE)
-- Phase 4: Incident Correlation (NOT STARTED)
+- Phase 4: Incident Correlation (COMPLETE)
 - Phase 5: Dashboard (NOT STARTED)
 - Phase 6: AI Investigator / RAG (NOT STARTED)

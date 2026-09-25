@@ -1,0 +1,56 @@
+[
+  {
+    "timestamp": "2024-03-10T10:00:00Z",
+    "source_ip": "192.168.1.100",
+    "user": "jdoe",
+    "action": "login_failed",
+    "status": "failure"
+  },
+  {
+    "timestamp": "2024-03-10T10:05:00Z",
+    "source_ip": "192.168.1.100",
+    "user": "jdoe",
+    "action": "login_failed",
+    "status": "failure"
+  },
+  {
+    "timestamp": "2024-03-10T10:10:00Z",
+    "source_ip": "192.168.1.100",
+    "user": "jdoe",
+    "action": "login_failed",
+    "status": "failure"
+  },
+  {
+    "timestamp": "2024-03-11T14:00:00Z",
+    "source_ip": "10.0.0.50",
+    "user": "asmith",
+    "action": "malware_detected",
+    "status": "blocked",
+    "process": "evil.exe"
+  },
+  {
+    "timestamp": "2024-03-11T14:15:00Z",
+    "source_ip": "10.0.0.50",
+    "user": "asmith",
+    "action": "privilege_escalation_attempt",
+    "status": "success",
+    "process": "cmd.exe"
+  },
+  {
+    "timestamp": "2024-03-12T09:00:00Z",
+    "source_ip": "10.0.0.200",
+    "user": "service_account",
+    "action": "database_mass_export",
+    "status": "success",
+    "bytes_out": 500000000
+  },
+  {
+    "timestamp": "2024-03-12T09:20:00Z",
+    "source_ip": "10.0.0.200",
+    "user": "service_account",
+    "action": "outbound_connection",
+    "status": "success",
+    "destination_ip": "203.0.113.5",
+    "bytes_out": 490000000
+  }
+]
